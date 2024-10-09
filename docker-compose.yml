@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - PORT=8000
+      - MONGO_URI=${MONGO_URI}
+
+  app_1:
+    build: .
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    environment:
+      - PORT=8000
+      - MONGO_URI=${MONGO_URI}

@@ -55,10 +55,23 @@ instance in interactive mode.
 
 By default, the web service will run on port 8000.
 
+### Running multiple instances of the service
+
+To run the web service in interactive mode, use the following command:
+```commandline
+ docker-compose up --build     
+```
+
+This command will build a two instances of the Docker image 
+
+By default, the web services will run on port 8000 and 8001.
+
 ### Testing
 
 Swagger UI is available as part of the FastAPI framework that can be used to inspect and test
 the API endpoints of the URL shortener. To access it, start run the web service and go to http://localhost:8000/docs
+
+If you use docker compose to test out the two instances, you can also use http://localhost:8001/docs to test the methods.
 
 ## Submission Guidelines
 When you have completed the project, please follow these guidelines for submission:
