@@ -13,13 +13,17 @@ import validators
 
 app = FastAPI()
 
+ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://localhost:8001",
+]
 # logs all messages
 logging.basicConfig(level=logging.DEBUG)
 
 # allow us to redirect the user
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8000","http://localhost:8001"], # only allows redirects from base URL
+    allow_origins=ALLOWED_ORIGINS, # only allows redirects from base URL
     allow_credentials=True,
     allow_methods=['GET'], # only allows for get method 
     allow_headers=['*']
@@ -103,14 +107,13 @@ class ResolveRequest(BaseModel):
     short_url: str
 
 
-@app.get("/r/{short_url}")
+@app.get("/r/{short_url}", status_code=307)
 async def url_resolve(short_url: str):
     """
     Return a redirect response for a valid shortened URL string.
     If the short URL is unknown, return an HTTP 404 response.
     """
     # This is to see which worker completed the task
-    logging.info(f'Request handled by {app.state.worker_id}')
     filter  = {
         "short_url": short_url,
     }
@@ -119,8 +122,8 @@ async def url_resolve(short_url: str):
     if curr_url is None:
         logging.error(f"{short_url} was not found in the database - WORKER: {app.state.worker_id}")
         raise HTTPException(status_code=404, detail=f"{short_url} not found")
-
     url = curr_url['original_url']
+    logging.info(f"sent user to {url} - WORKER: {app.state.worker_id}")
     return RedirectResponse(url=url)
 
 
